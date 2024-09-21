@@ -58,7 +58,7 @@ steps:
       ]
 
 substitutions:
-  _INSTANCE_NAME: django-instance
+  _INSTANCE_NAME: imgogodbx
   _REGION: us-central1
   _SERVICE_NAME: imgogo-servicex
   _SECRET_SETTINGS_NAME: django_settingsx
