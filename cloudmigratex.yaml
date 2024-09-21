@@ -16,11 +16,11 @@
 steps:
   - id: "build image"
     name: "gcr.io/cloud-builders/docker"
-    args: ["build", "--no-cache", "-t", "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}", "."]
+    args: ["build", "--no-cache", "-t", "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}:latest", "."]
 
   - id: "push image"
     name: "gcr.io/cloud-builders/docker"
-    args: ["push", "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}"]
+    args: ["push", "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}:latest"]
 
   - id: "apply migrations"
     name: "gcr.io/google-appengine/exec-wrapper"
@@ -56,6 +56,11 @@ steps:
         "2",
         "--no-input",
       ]
+
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: ['run', 'deploy', '${_SERVICE_NAME}', '--image', 'gcr.io/${PROJECT_ID}/${_SERVICE_NAME}', '--region', '${_REGION}']
 
 substitutions:
   _INSTANCE_NAME: imgogodbx
