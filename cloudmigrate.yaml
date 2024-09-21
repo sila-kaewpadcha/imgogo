@@ -2,8 +2,6 @@
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
 #      http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
@@ -14,7 +12,7 @@
 
 # [START cloudrun_django_cloudmigrate]
 steps:
-  # Set environment variables based on the branch
+  # Determine variables based on the branch
   - id: "set-env-vars"
     name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: /bin/sh
@@ -81,9 +79,10 @@ steps:
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args: ['run', 'deploy', '${SERVICE_NAME}', '--image', 'gcr.io/${PROJECT_ID}/${SERVICE_NAME}:${BRANCH_NAME}', '--region', '${_REGION}', '--allow-unauthenticated']
-    
+
 substitutions:
   _REGION: us-central1
+  BRANCH_NAME: $BRANCH_NAME  # Pass in the branch name during the trigger
 
 images:
   - "gcr.io/${PROJECT_ID}/${SERVICE_NAME}:${BRANCH_NAME}"
