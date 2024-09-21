@@ -1,6 +1,12 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
+
 import json
+
+import environ
+env = environ.Env()
 
 # Create your views here.
 
@@ -10,5 +16,14 @@ def index(request):
 def test(request):
     return HttpResponse("OK new env 99")
 
+@require_http_methods(["GET"])
 def check_env(request):
-    return HttpResponse("Check ENV")
+    environment = env("_ENV", default="staging")
+    print('hi environment: ', environment)
+    return HttpResponse(environment)
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def callout(request):
+    print('hi callout')
+    return HttpResponse("Hi Callout POST API")

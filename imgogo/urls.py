@@ -22,5 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('indexs/', imapp.views.index, name="index"),
     path('test/', imapp.views.test, name="index"),
-    path('check/', imapp.views.check_env, name="check")
+    path('check/', imapp.views.check_env, name="check"),
+    path('callout/', imapp.views.callout, name="callout"),
 ]
