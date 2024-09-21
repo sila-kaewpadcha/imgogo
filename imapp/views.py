@@ -8,7 +8,7 @@ def index(request):
     return HttpResponse("Hi")
 
 def test(request):
-    return HttpResponse("OK new env last test 55")
+    return HttpResponse("OK new env GG")
 
 def check_env(request):
     return HttpResponse("Check ENV")
