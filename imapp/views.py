@@ -10,4 +10,5 @@ def index(request):
 def test(request):
     return HttpResponse("OK new env last test 3")
 
-
+def check_env(request):
+    return HttpResponse("Check ENV")

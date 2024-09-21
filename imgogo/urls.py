@@ -21,5 +21,6 @@ import imapp.views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('indexs/', imapp.views.index, name="index"),
-    path('test/', imapp.views.test, name="index")
+    path('test/', imapp.views.test, name="index"),
+    path('check/', imapp.views.check_env, name="check")
 ]
