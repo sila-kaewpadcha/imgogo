@@ -6,3 +6,6 @@ import json
 
 def index(request):
     return HttpResponse("Hi")
+
+def test(request):
+    return HttpResponse("OK")
