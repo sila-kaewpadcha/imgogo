@@ -14,18 +14,16 @@ def index(request):
     return HttpResponse("Hi")
 
 def test(request):
-    return HttpResponse("OK new env 99")
+    return HttpResponse("OK")
 
 @require_http_methods(["GET"])
 def check_env(request):
     environment = env("_ENV", default="staging")
-    print('hi environment: ', environment)
-    return HttpResponse('hi env: ' + environment)
+    return HttpResponse(environment)
 
 @csrf_exempt
 @require_http_methods(["POST"])
 def callout(request):
-    print('hi callout')
     pure_body = request.body
     try:
         body = json.loads(pure_body)
@@ -40,7 +38,7 @@ def callout(request):
     res = {
         "results": results
     }
-    
+
     return JsonResponse(res)
 
 def cal_impower(num):
