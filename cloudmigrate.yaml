@@ -16,18 +16,17 @@
 steps:
   - id: "build image"
     name: "gcr.io/cloud-builders/docker"
-    args: ["build", "-t", "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}", "."]
-
+    args: ["build", "-t", "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}:${BRANCH_NAME}", "."]
   - id: "push image"
     name: "gcr.io/cloud-builders/docker"
-    args: ["push", "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}"]
+    args: ["push", "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}:${BRANCH_NAME}"]
 
   - id: "apply migrations"
     name: "gcr.io/google-appengine/exec-wrapper"
     args:
       [
         "-i",
-        "gcr.io/$PROJECT_ID/${_SERVICE_NAME}",
+        "gcr.io/$PROJECT_ID/${_SERVICE_NAME}:${BRANCH_NAME}",
         "-s",
         "${PROJECT_ID}:${_REGION}:${_INSTANCE_NAME}",
         "-e",
@@ -43,7 +42,7 @@ steps:
     args:
       [
         "-i",
-        "gcr.io/$PROJECT_ID/${_SERVICE_NAME}",
+        "gcr.io/$PROJECT_ID/${_SERVICE_NAME}:${BRANCH_NAME}",
         "-s",
         "${PROJECT_ID}:${_REGION}:${_INSTANCE_NAME}",
         "-e",
@@ -60,16 +59,10 @@ steps:
   # Deploy container image to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
-    args: ['run', 'deploy', '${_SERVICE_NAME}', '--image', 'gcr.io/${PROJECT_ID}/${_SERVICE_NAME}', '--region', '${_REGION}']
-    
-substitutions:
-  _INSTANCE_NAME: imgogodb
-  _REGION: asia-southeast2
-  _SERVICE_NAME: imgogo-service
-  _SECRET_SETTINGS_NAME: django_settings
+    args: ['run', 'deploy', '${_SERVICE_NAME}', '--image', 'gcr.io/${PROJECT_ID}/${_SERVICE_NAME}:${BRANCH_NAME}', '--region', '${_REGION}', '--set-env-vars', 'SETTINGS_NAME=${_SECRET_SETTINGS_NAME}']
 
 images:
-  - "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}"
+  - "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}:${BRANCH_NAME}"
 # [END cloudrun_django_cloudmigrate]
 
 options:
