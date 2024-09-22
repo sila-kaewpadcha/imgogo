@@ -14,25 +14,24 @@
 
 # [START cloudrun_django_cloudmigrate]
 steps:
+  - id: "build image"
+    name: "gcr.io/cloud-builders/docker"
+    args: ["build", "-t", "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}:${BRANCH_NAME}", "."]
+
   - id: "run tests"
-    name: "gcr.io/google-appengine/exec-wrapper"
+    name: "gcr.io/cloud-builders/docker"
     args:
       [
-        "-i",
-        "gcr.io/$PROJECT_ID/${_SERVICE_NAME}:${BRANCH_NAME}",
-        "-s",
-        "${PROJECT_ID}:${_REGION}:${_INSTANCE_NAME}",
-        "-e",
-        "SETTINGS_NAME=${_SECRET_SETTINGS_NAME}",
-        "--",
+        "run",
+        "--rm",
+        "--network", "host",
+        '-e', 'SETTINGS_NAME=${_SECRET_SETTINGS_NAME}',
+        '-e', 'TRAMPOLINE_CI=True',
+        "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}:${BRANCH_NAME}",
         "python",
         "manage.py",
         "test",
       ]
-
-  - id: "build image"
-    name: "gcr.io/cloud-builders/docker"
-    args: ["build", "-t", "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}:${BRANCH_NAME}", "."]
 
   - id: "push image"
     name: "gcr.io/cloud-builders/docker"
