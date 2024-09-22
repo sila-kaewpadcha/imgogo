@@ -20,7 +20,7 @@ def test(request):
 def check_env(request):
     environment = env("_ENV", default="staging")
     print('hi environment: ', environment)
-    return HttpResponse(environment)
+    return HttpResponse('hi env: ' + environment)
 
 @csrf_exempt
 @require_http_methods(["POST"])
