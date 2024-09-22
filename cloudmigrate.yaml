@@ -59,7 +59,7 @@ steps:
   # Deploy container image to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
-    args: ['run', 'deploy', '${_SERVICE_NAME}', '--image', 'gcr.io/${PROJECT_ID}/${_SERVICE_NAME}:${BRANCH_NAME}', '--region', '${_REGION}', '--set-env-vars', 'SETTINGS_NAME=${_SECRET_SETTINGS_NAME}', '--allow-unauthenticated']
+    args: ['run', 'deploy', '${_SERVICE_NAME}', '--image', 'gcr.io/${PROJECT_ID}/${_SERVICE_NAME}:${BRANCH_NAME}', '--region', '${_REGION}', '--set-env-vars', 'SETTINGS_NAME=${_SECRET_SETTINGS_NAME}']
 
 images:
   - "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}:${BRANCH_NAME}"
