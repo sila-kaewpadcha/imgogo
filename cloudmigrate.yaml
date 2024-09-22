@@ -17,6 +17,21 @@ steps:
   - id: "build image"
     name: "gcr.io/cloud-builders/docker"
     args: ["build", "-t", "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}:${BRANCH_NAME}", "."]
+
+  - id: "run tests"
+    name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "run",
+        "--rm",
+        "--network", "host",
+        '-e', 'TRAMPOLINE_CI=True',
+        "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}:${BRANCH_NAME}",
+        "python",
+        "manage.py",
+        "test",
+      ]
+
   - id: "push image"
     name: "gcr.io/cloud-builders/docker"
     args: ["push", "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}:${BRANCH_NAME}"]

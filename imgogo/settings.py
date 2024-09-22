@@ -31,19 +31,15 @@ env_file = os.path.join(BASE_DIR, ".env")
 
 # Attempt to load the Project ID into the environment, safely failing on error.
 try:
-    print('hi try')
     _, os.environ["GOOGLE_CLOUD_PROJECT"] = google.auth.default()
 except google.auth.exceptions.DefaultCredentialsError:
-    print('hi except')
     pass
 
 if os.path.isfile(env_file):
-    print('hi ifff')
     # Use a local secret file, if provided
     env.read_env(env_file)
 # [START_EXCLUDE]
 elif os.getenv("TRAMPOLINE_CI", None):
-    print('hi elif 111')
     # Create local settings if running with CI, for unit testing
     placeholder = (
         f"SECRET_KEY=a\n"
@@ -53,10 +49,8 @@ elif os.getenv("TRAMPOLINE_CI", None):
     env.read_env(io.StringIO(placeholder))
 # [END_EXCLUDE]
 elif os.environ.get("GOOGLE_CLOUD_PROJECT", None):
-    print('hi elif 222')
     # Pull secrets from Secret Manager
     project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
-
     client = secretmanager.SecretManagerServiceClient()
     settings_name = os.environ.get("SETTINGS_NAME", "django_settings")
     name = f"projects/{project_id}/secrets/{settings_name}/versions/latest"
@@ -64,17 +58,14 @@ elif os.environ.get("GOOGLE_CLOUD_PROJECT", None):
 
     env.read_env(io.StringIO(payload))
 else:
-    print('hi elseeee')
     raise Exception("No local .env or GOOGLE_CLOUD_PROJECT detected. No secrets found.")
 # [END cloudrun_django_secret_config]
 
 SECRET_KEY = env("SECRET_KEY")
 
 DEBUG = env("DEBUG")
-print('hi debug: ', DEBUG)
 
 environment = env("_ENV", default="staging")
-print('hi settings environment: ', environment)
 
 # [START cloudrun_django_csrf]
 # SECURITY WARNING: It's recommended that you use this when
@@ -82,10 +73,8 @@ print('hi settings environment: ', environment)
 # to Cloud Run. This code takes the URL and converts it to both these settings formats.
 CLOUDRUN_SERVICE_URL = env("CLOUDRUN_SERVICE_URL", default=None)
 
-print('hi CLOUDRUN_SERVICE_URL: ', CLOUDRUN_SERVICE_URL)
 if CLOUDRUN_SERVICE_URL:
     ALLOWED_HOSTS = [urlparse(CLOUDRUN_SERVICE_URL).netloc]
-    print('hi ALLOWED_HOSTS: ', CLOUDRUN_SERVICE_URL)
     CSRF_TRUSTED_ORIGINS = [CLOUDRUN_SERVICE_URL]
     SECURE_SSL_REDIRECT = True
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
