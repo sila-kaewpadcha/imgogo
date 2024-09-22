@@ -30,7 +30,7 @@ env = environ.Env(DEBUG=(bool, True))
 env_file = os.path.join(BASE_DIR, ".env")
 
 # Attempt to load the Project ID into the environment, safely failing on error.
-print("hi test01")
+print("hi test02")
 try:
     print('hi try')
     _, os.environ["GOOGLE_CLOUD_PROJECT"] = google.auth.default()

@@ -25,7 +25,6 @@ steps:
         "run",
         "--rm",
         "--network", "host",
-        '-e', 'SETTINGS_NAME=${_SECRET_SETTINGS_NAME}',
         '-e', 'TRAMPOLINE_CI=True',
         "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}:${BRANCH_NAME}",
         "python",
