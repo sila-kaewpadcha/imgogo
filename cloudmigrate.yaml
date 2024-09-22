@@ -61,12 +61,6 @@ steps:
     entrypoint: gcloud
     args: ['run', 'deploy', '${_SERVICE_NAME}', '--image', 'gcr.io/${PROJECT_ID}/${_SERVICE_NAME}:${BRANCH_NAME}', '--region', '${_REGION}', '--allow-unauthenticated']
 
-substitutions:
-  _INSTANCE_NAME: imgogodbdev
-  _REGION: us-central1
-  _SERVICE_NAME: imgogo-service-dev
-  _SECRET_SETTINGS_NAME: django_settingsdev
-
 images:
   - "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}:${BRANCH_NAME}"
 # [END cloudrun_django_cloudmigrate]
