@@ -2,6 +2,8 @@
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
 #      http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
@@ -12,44 +14,24 @@
 
 # [START cloudrun_django_cloudmigrate]
 steps:
-  # Determine variables based on the branch
-  - id: "set-env-vars"
-    name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
-    entrypoint: /bin/sh
-    args:
-      - "-c"
-      - |
-        if [ "$BRANCH_NAME" == "main" ]; then
-          INSTANCE_NAME=imgogodbx
-          SECRET_SETTINGS_NAME=django_settingsx
-          SERVICE_NAME=imgogo-servicex
-        else
-          INSTANCE_NAME=imgogodbdev
-          SECRET_SETTINGS_NAME=django_settingsdev
-          SERVICE_NAME=imgogo-service-dev
-        fi
-        echo "INSTANCE_NAME=${INSTANCE_NAME}" >> $ENV_FILE
-        echo "SECRET_SETTINGS_NAME=${SECRET_SETTINGS_NAME}" >> $ENV_FILE
-        echo "SERVICE_NAME=${SERVICE_NAME}" >> $ENV_FILE
-
   - id: "build image"
     name: "gcr.io/cloud-builders/docker"
-    args: ["build", "-t", "gcr.io/${PROJECT_ID}/${SERVICE_NAME}:${BRANCH_NAME}", "."]
+    args: ["build", "-t", "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}/${BRANCH_NAME}", "."]
 
   - id: "push image"
     name: "gcr.io/cloud-builders/docker"
-    args: ["push", "gcr.io/${PROJECT_ID}/${SERVICE_NAME}:${BRANCH_NAME}"]
+    args: ["push", "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}/${BRANCH_NAME}"]
 
   - id: "apply migrations"
     name: "gcr.io/google-appengine/exec-wrapper"
     args:
       [
         "-i",
-        "gcr.io/$PROJECT_ID/${SERVICE_NAME}:${BRANCH_NAME}",
+        "gcr.io/$PROJECT_ID/${_SERVICE_NAME}/${BRANCH_NAME}",
         "-s",
-        "${PROJECT_ID}:${_REGION}:${INSTANCE_NAME}",
+        "${PROJECT_ID}:${_REGION}:${_INSTANCE_NAME}",
         "-e",
-        "SETTINGS_NAME=${SECRET_SETTINGS_NAME}",
+        "SETTINGS_NAME=${_SECRET_SETTINGS_NAME}",
         "--",
         "python",
         "manage.py",
@@ -61,11 +43,11 @@ steps:
     args:
       [
         "-i",
-        "gcr.io/$PROJECT_ID/${SERVICE_NAME}:${BRANCH_NAME}",
+        "gcr.io/$PROJECT_ID/${_SERVICE_NAME}/${BRANCH_NAME}",
         "-s",
-        "${PROJECT_ID}:${_REGION}:${INSTANCE_NAME}",
+        "${PROJECT_ID}:${_REGION}:${_INSTANCE_NAME}",
         "-e",
-        "SETTINGS_NAME=${SECRET_SETTINGS_NAME}",
+        "SETTINGS_NAME=${_SECRET_SETTINGS_NAME}",
         "--",
         "python",
         "manage.py",
@@ -78,13 +60,17 @@ steps:
   # Deploy container image to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
-    args: ['run', 'deploy', '${SERVICE_NAME}', '--image', 'gcr.io/${PROJECT_ID}/${SERVICE_NAME}:${BRANCH_NAME}', '--region', '${_REGION}', '--allow-unauthenticated']
+    args: ['run', 'deploy', '${_SERVICE_NAME}', '--image', 'gcr.io/${PROJECT_ID}/${_SERVICE_NAME}/${BRANCH_NAME}', '--region', '${_REGION}']
 
 substitutions:
+  _INSTANCE_NAME: imgogodbdev
   _REGION: us-central1
+  _SERVICE_NAME: imgogo-service-dev
+  _SECRET_SETTINGS_NAME: django_settingsdev
+  BRANCH_NAME: $BRANCH_NAME
 
 images:
-  - "gcr.io/${PROJECT_ID}/${SERVICE_NAME}:${BRANCH_NAME}"
+  - "gcr.io/${PROJECT_ID}/${_SERVICE_NAME}/${BRANCH_NAME}"
 # [END cloudrun_django_cloudmigrate]
 
 options:
