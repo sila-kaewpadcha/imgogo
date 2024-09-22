@@ -73,6 +73,9 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env("DEBUG")
 print('hi debug: ', DEBUG)
 
+environment = env("_ENV", default="staging")
+print('hi settings environment: ', environment)
+
 # [START cloudrun_django_csrf]
 # SECURITY WARNING: It's recommended that you use this when
 # running in production. The URL will be known once you first deploy
