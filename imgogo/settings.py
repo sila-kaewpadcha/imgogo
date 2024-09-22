@@ -56,20 +56,27 @@ elif os.environ.get("GOOGLE_CLOUD_PROJECT", None):
     print('hi elif 222')
     # Pull secrets from Secret Manager
     project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
+    print('project_id: ', project_id)
 
     client = secretmanager.SecretManagerServiceClient()
+    print('hi client')
     settings_name = os.environ.get("SETTINGS_NAME", "django_settings")
+    print('hi settings_name: ', settings_name)
     name = f"projects/{project_id}/secrets/{settings_name}/versions/latest"
+    print('hi name')
     payload = client.access_secret_version(name=name).payload.data.decode("UTF-8")
 
+    print('hi before readenv')
     env.read_env(io.StringIO(payload))
+    print('hi after readenv')
 else:
     print('hi elseeee')
     raise Exception("No local .env or GOOGLE_CLOUD_PROJECT detected. No secrets found.")
 # [END cloudrun_django_secret_config]
-
+print('hi before SECRET_KEY')
 SECRET_KEY = env("SECRET_KEY")
 
+print('hi after SECRET_KEY', SECRET_KEY)
 DEBUG = env("DEBUG")
 print('hi debug: ', DEBUG)
 
